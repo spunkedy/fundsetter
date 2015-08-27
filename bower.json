@@ -1,0 +1,19 @@
+{
+  "name": "fundsetter",
+  "version": "0.0.0",
+  "authors": [
+    "ed bond <ed.bond@mere-tech.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "assets/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4"
+  }
+}
