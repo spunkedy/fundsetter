@@ -27,8 +27,8 @@
             goalAmount: 0,
 			progressAmount: 0,
 			animate: true,
-			slideDuration: 1000,
-			fadeDuration: 500,
+			slideDuration: 600,
+			fadeDuration: 200,
 			formatter: null
         };
 

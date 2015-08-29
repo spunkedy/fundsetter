@@ -35,4 +35,12 @@ module.exports = {
   //   level: "silent"
   // }
 
+  f1connection: {
+    accessUrl : process.env.ACCESS_URL,
+    requestUrl : process.env.REQUEST_URL,
+    consumerKey :  process.env.CONSUMER_KEY ,
+    consumerSecret : process.env.CONSUMER_SECRET,
+    userId: process.env.USER_ID,
+    userPassword : process.env.USER_PASSWORD
+  }
 };
