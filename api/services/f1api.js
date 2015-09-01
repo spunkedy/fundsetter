@@ -7,11 +7,21 @@ var CONSUMER_KEY = sails.config.f1connection.consumerKey;
 var CONSUMER_SECRET = sails.config.f1connection.consumerSecret;
 var USER_ID = sails.config.f1connection.userId;
 var USER_PASSWORD = sails.config.f1connection.userPassword;
-
+var BASE_URL = sails.config.f1connection.baseUrl;
 
 //rest API endpoints
-var FUND_QUERY = 'https://cbcsattx.staging.fellowshiponeapi.com/giving/v1/funds/251856.json';
-
+var FUND_QUERY = BASE_URL + 'giving/v1/funds/294115.json';
+var ALL_FUNDS_QUERY = BASE_URL + 'giving/v1/funds.json';
+var RECEIPTS = BASE_URL + "giving/v1/contributionreceipts/search.json?" + qs.stringify({
+  startReceivedDate:"2015-08-20",
+  recordsPerPage:99999
+});
+var BATCHES_QUERY = BASE_URL + "giving/v1/batches/search?" + qs.stringify({
+  searchFor:"*01-4201-2000*",
+  batchTypeID:1,
+  recordsPerPage:30
+});
+var BATCHES_TYPE = BASE_URL + "giving/v1/batches/batchtypes.json";
 
 //Private ish function
 // Credential conversion
@@ -67,18 +77,26 @@ f1Object.queryUrl = function(url,cb){
         oauth:oauthHeader
       }, function (e, r, body) {
         // ready to make signed requests on behalf of the user
+        console.log(r.statusCode);
         if(r.statusCode == 401){
-
           console.log(e);
           console.log(r);
           retryCallback();
-        } else {
+        } else if (r.statusCode == 500){
+            console.log(e);
+            cb({error:"500 server error on f1 side."});
+        } else if (r.statusCode == 404){
+            console.log(e);
+            cb({error:"404 server on f1 side."});
+        } else if(r.statusCode == 200) {
           console.log("came back");
-          console.log(e);
-          console.log(r);
-          console.log(body);
-
-          cb(JSON.parse(body));
+          try{
+              cb(JSON.parse(body));
+          } catch (e){
+            cb({ error: "Parse error"});
+          }
+        } else{
+          cb({});
         }
       })
     } else {
@@ -88,9 +106,29 @@ f1Object.queryUrl = function(url,cb){
   });
 };
 
-f1Object.sayHello = function ( cb ){
+f1Object.batchesQuery = function ( cb ){
+  f1Object.queryUrl(BATCHES_QUERY,cb);
+};
+f1Object.queryFund = function ( cb ){
   f1Object.queryUrl(FUND_QUERY,cb);
 };
-
+f1Object.batchTypes = function(cb){
+  f1Object.queryUrl(BATCHES_TYPE,cb);
+};
+f1Object.receipts = function(cb){
+  f1Object.queryUrl(RECEIPTS,cb);
+};
+f1Object.getTotalPaidInFull = function(cb){
+  f1Object.queryUrl(RECEIPTS,function(data){
+    var total = parseFloat("0.00");
+    var filteredData = data.results.contributionReceipt.filter(function (el) {
+      return el.fund.name == "Paid In Full";
+    });
+    filteredData.forEach(function(item){
+      total = total + parseFloat(item.amount);
+    });
+    cb({totalContributions:total});
+  });
+};
 
 module.exports = f1Object;

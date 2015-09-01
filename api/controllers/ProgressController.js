@@ -20,9 +20,11 @@ module.exports = {
 			});
 		});
 	},
-	testService: function(req,res){
-		f1api.sayHello(function(data){
+	getTotal: function(req,res){
+		f1api.getTotalPaidInFull(function(data){
 			res.json(data);
 		});
 	}
+
+
 };

@@ -36,6 +36,7 @@ module.exports = {
   // }
 
   f1connection: {
+    baseUrl: process.env.BASE_URL,
     accessUrl : process.env.ACCESS_URL,
     requestUrl : process.env.REQUEST_URL,
     consumerKey :  process.env.CONSUMER_KEY ,
