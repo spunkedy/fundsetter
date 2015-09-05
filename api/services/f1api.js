@@ -143,8 +143,12 @@ f1Object.getTotalPaidInFull = function(goalAmount,cb){
             filteredData.forEach(function(item){
               total = total + parseFloat(item.amount);
             });
-            myCache.set(cacheKey,{totalContributions:(total/goalAmount) * 100});
-            cb({totalContributions:(total/goalAmount) * 100});
+            myCache.set(cacheKey,{
+              totalContributions: parseFloat((total/goalAmount) * 100).toFixed(5)
+             } );
+            cb( {
+              totalContributions: parseFloat((total/goalAmount) * 100).toFixed(5)
+             } );
           });
         }
 
