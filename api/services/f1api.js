@@ -138,7 +138,7 @@ f1Object.getTotalPaidInFull = function(goalAmount,cb){
           f1Object.queryUrl(RECEIPTS,function(data){
             var total = parseFloat("0.00");
             var filteredData = data.results.contributionReceipt.filter(function (el) {
-              return el.fund.name == "Paid In Full";
+              return el.fund.name == "_Paid In Full";
             });
             filteredData.forEach(function(item){
               total = total + parseFloat(item.amount);
