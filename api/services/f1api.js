@@ -123,7 +123,7 @@ f1Object.batchTypes = function(cb){
 f1Object.receipts = function(cb){
   f1Object.queryUrl(RECEIPTS,cb);
 };
-f1Object.getTotalPaidInFull = function(cb){
+f1Object.getTotalPaidInFull = function(goalAmount,cb){
 
     var cacheKey = "paidInFull";
     myCache.get(cacheKey, function (err, result) {
@@ -144,7 +144,7 @@ f1Object.getTotalPaidInFull = function(cb){
               total = total + parseFloat(item.amount);
             });
             myCache.set(cacheKey,{totalContributions:total});
-            cb({totalContributions:total});
+            cb({totalContributions:(total/goalAmount) * 100});
           });
         }
 

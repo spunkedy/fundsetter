@@ -7,8 +7,8 @@
 
 module.exports = {
 	getProgress: function(req,res){
-		F1service.findOrCreate({name:'paidinfull'}).exec(function createCB(err, created){
-			res.json(created);
+		f1api.getTotalPaidInFull(18000000,function(data){
+			res.json(data);
 		});
 	},
 	setProgress: function(req,res){
@@ -19,12 +19,5 @@ module.exports = {
 				res.json(created);
 			});
 		});
-	},
-	getTotal: function(req,res){
-		f1api.getTotalPaidInFull(function(data){
-			res.json(data);
-		});
 	}
-
-
 };

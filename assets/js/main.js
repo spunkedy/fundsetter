@@ -1,10 +1,10 @@
 var lastValue = 0;
 function doPoll(){
   $.get( "/progress/getProgress", function( data ) {
-    if(lastValue != data.value){
+    if(lastValue != data.totalContributions){
       $("#goal-meter-1").goalMeter({
     		goalAmount: 100,
-        progressAmount: data.value
+        progressAmount: data.totalContributions
       });
       lastValue = data.value;
     }
