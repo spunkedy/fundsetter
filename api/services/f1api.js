@@ -1,5 +1,8 @@
 var request = require('request');
 var qs = require('querystring');
+var NodeCache = require( "node-cache" );
+var myCache = new NodeCache( { stdTTL: 180, checkperiod: 90 } );
+
 //Config based information
 var ACCESS_URL = sails.config.f1connection.accessUrl;
 var REQUEST_URL = sails.config.f1connection.requestUrl;
@@ -77,23 +80,25 @@ f1Object.queryUrl = function(url,cb){
         oauth:oauthHeader
       }, function (e, r, body) {
         // ready to make signed requests on behalf of the user
-        console.log(r.statusCode);
-        if(r.statusCode == 401){
-          console.log(e);
-          console.log(r);
-          retryCallback();
-        } else if (r.statusCode == 500){
+        if(r && r.statusCode){
+          console.log(r.statusCode);
+          if(r.statusCode == 401){
             console.log(e);
-            cb({error:"500 server error on f1 side."});
-        } else if (r.statusCode == 404){
-            console.log(e);
-            cb({error:"404 server on f1 side."});
-        } else if(r.statusCode == 200) {
-          console.log("came back");
-          try{
-              cb(JSON.parse(body));
-          } catch (e){
-            cb({ error: "Parse error"});
+            console.log(r);
+            retryCallback();
+          } else if (r.statusCode == 500){
+              console.log(e);
+              cb({error:"500 server error on f1 side."});
+          } else if (r.statusCode == 404){
+              console.log(e);
+              cb({error:"404 server on f1 side."});
+          } else if(r.statusCode == 200) {
+            console.log("came back");
+            try{
+                cb(JSON.parse(body));
+            } catch (e){
+              cb({ error: "Parse error"});
+            }
           }
         } else{
           cb({});
@@ -119,16 +124,33 @@ f1Object.receipts = function(cb){
   f1Object.queryUrl(RECEIPTS,cb);
 };
 f1Object.getTotalPaidInFull = function(cb){
-  f1Object.queryUrl(RECEIPTS,function(data){
-    var total = parseFloat("0.00");
-    var filteredData = data.results.contributionReceipt.filter(function (el) {
-      return el.fund.name == "Paid In Full";
+
+    var cacheKey = "paidInFull";
+    myCache.get(cacheKey, function (err, result) {
+
+        //Error hitting cache
+        if (err) {
+          throw new Error(err);
+        } else if (result) {
+          cb(result);
+        } else {
+          //Need to process
+          f1Object.queryUrl(RECEIPTS,function(data){
+            var total = parseFloat("0.00");
+            var filteredData = data.results.contributionReceipt.filter(function (el) {
+              return el.fund.name == "Paid In Full";
+            });
+            filteredData.forEach(function(item){
+              total = total + parseFloat(item.amount);
+            });
+            myCache.set(cacheKey,{totalContributions:total});
+            cb({totalContributions:total});
+          });
+        }
+
+
     });
-    filteredData.forEach(function(item){
-      total = total + parseFloat(item.amount);
-    });
-    cb({totalContributions:total});
-  });
+
 };
 
 module.exports = f1Object;

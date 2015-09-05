@@ -10,7 +10,7 @@ function doPoll(){
     }
     console.log("data returned");
     console.log(data);
-    setTimeout(doPoll,5000);
+    setTimeout(doPoll,70000);
   });
 }
 doPoll();
@@ -24,7 +24,7 @@ $(document).ready(function(){
 	// Example using a formatter function
 	$("#goal-meter-1").goalMeter({
 		formatter: function(number) {
-			return number;
+			return number + "%";
 		}
 	});
 
