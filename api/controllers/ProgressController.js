@@ -19,5 +19,20 @@ module.exports = {
 				res.json(created);
 			});
 		});
+	},
+	getDays: function(req,res){
+		console.log(Funds.count());
+		Funds.find({}).exec(function findCB(err, found){
+		  res.json(found);
+		});
+	},
+	pushDay: function(req,res){
+		Funds.create({date: "12/12/2015", amount: 333.33}).exec(function createCB(err, created){
+		  console.log('Created user with date ' + created.date);
+
+			res.json(created);
+		});
+
 	}
+
 };
