@@ -21,6 +21,11 @@ var FUND_QUERY = BASE_URL + 'giving/v1/funds/294115.json';
 var ALL_FUNDS_QUERY = BASE_URL + 'giving/v1/funds.json';
 var RECEIPTS = BASE_URL + "giving/v1/contributionreceipts/search.json?";
 var START_DATE = "2015-08-24";
+//Group endpoints
+var GROUP_TYPE = BASE_URL + 'groups/v1/grouptypes.json';
+var GROUP_INFO = BASE_URL + 'groups/v1/grouptypes/';
+var GROUP_INFO_SUFFIX = '/groups.json';
+
 //var START_DATE = "2015-10-10";
 var BATCHES_QUERY = BASE_URL + "giving/v1/batches/search?" + qs.stringify({
   searchFor:"*01-4201-2000*",
@@ -99,8 +104,8 @@ f1Object.queryUrl = function(url,cb){
             console.log("came back");
             try{
                 cb(JSON.parse(body));
-            } catch (e){
-              cb({ error: "Parse error"});
+            } catch (e) {
+              cb({error: "Parse error", errorObj:e});
             }
           }
         } else{
@@ -134,6 +139,22 @@ f1Object.getReceiptQueryURL = function(fromDate,toDate){
   });
 };
 
+//Get the group types to build a nested search if we want
+f1Object.getGroupTypes = function (cb){
+  f1Object.queryUrl(GROUP_TYPE, function(data){
+    cb(data);
+  });
+};
+//search out the groups specifically for indexing
+f1Object.getGroup = function (groupTypeId,cb){
+  var url = GROUP_INFO + groupTypeId + GROUP_INFO_SUFFIX;
+  console.log("searching for: ", url);
+  f1Object.queryUrl(url, function(data){
+    cb(data);
+  });
+};
+
+//Functions for parsing and going through paid in full campaign
 function parseDate(input) {
   var parts = input.split('-');
   return new Date(parts[0], parts[1]-1, parts[2]);
