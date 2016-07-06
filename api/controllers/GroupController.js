@@ -33,25 +33,29 @@ module.exports = {
   fillGroups: function(req,res){
 		try{
       GroupType.find({isSearchable: true,isWebEnabled: true}).exec( function ( err, items){
-        //console.log(items);
+        console.log(items);
         Group.destroy({});
         items.forEach(function(item){
             f1api.getGroup(item.groupId,function(groupItem){
-              //console.log(groupItem);
+              // console.log(groupItem);
               if(groupItem.groups){
                 groupItem.groups.group.forEach(function(singleGroup){
-                  //console.log(singleGroup);
-                  var toCreate = {};
-                  toCreate.name = singleGroup.name;
-                  toCreate.description = singleGroup.description;
-                  toCreate.link = "https://cbcsattx.infellowship.com/GroupSearch/ShowGroup/" + singleGroup["@id"];
+                  // console.log(singleGroup);
+									if(singleGroup.isSearchable && singleGroup.isSearchable === "true"){
+										console.log("apparently is searchable: " + singleGroup.isSearchable);
+										console.log(singleGroup);
+										var toCreate = {};
+										toCreate.name = singleGroup.name;
+										toCreate.description = singleGroup.description;
+										toCreate.link = "https://cbcsattx.infellowship.com/GroupSearch/ShowGroup/" + singleGroup["@id"];
 
-                  Group.create(toCreate).exec(function createCB(err,item){
-                    console.log("created, " , item);
-                      if(err){
-                        console.log(err);
-                      }
-                  });
+										Group.create(toCreate).exec(function createCB(err,item){
+											console.log("created, " , item);
+												if(err){
+													console.log(err);
+												}
+										});
+									}
                 });
               }
 

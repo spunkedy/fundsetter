@@ -11,9 +11,9 @@ module.exports = {
 			f1api.getGroupTypes(function(data){
 				if(data.groupTypes){
 					GroupType.destroy({});
-					//console.log("creating data,", data.groupTypes);
+					console.log("creating data,", data.groupTypes);
 					data.groupTypes.groupType.forEach(function(groupItem){
-						//console.log("creating / searching for, ", groupItem);
+						console.log("creating / searching for, ", groupItem);
 
 						var toCreate = {};
 						toCreate.groupId = groupItem["@id"];
